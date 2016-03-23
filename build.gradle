@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+
+plugins {
+  id 'java' // or 'groovy' Must be explicitly applied
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+  id 'application'
+  id "nebula.ospackage" version "3.4.0"
+  id "nebula.ospackage-application-daemon" version "3.1.1"
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'nebula.ospackage-daemon'
+
+
+defaultTasks 'clean', 'build'
+
+// Use Java 8 by default
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+// UTF-8 should be standard by now. So use it!
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+group = 'name.patdowney.demo'
+version = "0.0.2"
+
+ext {
+    dropwizardVersion = '1.0.0-rc1'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
+}
+
+
+mainClassName = 'name.patdowney.demo.DemoApplication'
+
+jar {
+    manifest {
+        attributes('Main-Class': mainClassName)
+    }
+}
+
+shadowJar {
+    mergeServiceFiles {
+        exclude 'META-INF/*.DSA', 'META-INF/*.RSA'
+    }
+    manifest {
+        attributes 'Implementation-Version': version
+    }
+}
+
+applicationdaemon {
+    user = "nobody"
+}
+
+artifacts {
+    archives shadowJar
+}
+
