@@ -6,12 +6,7 @@ import io.dropwizard.setup.Environment;
 public class DemoApplication extends Application<DemoConfiguration> {
 
     public static void main(final String[] args) throws Exception {
-        if(args.length == 0) {
-            // haven't figured out how to pass command line parameters to nebula ospackage plugin
-            new DemoApplication().run("server");
-        } else {
-            new DemoApplication().run(args);
-        }
+        new DemoApplication().run(args);
     }
 
     @Override
